@@ -1,12 +1,12 @@
 require('dotenv').config();
-const express = require('express')
+import express, { static, json } from 'express';
 const app = express();
-const cors = require('cors');
-const Note = require('./models/note');
+import cors from 'cors';
+import Note, { find, findById, findByIdAndRemove, findByIdAndUpdate } from './models/note';
 
 
-app.use(express.static('build'));
-app.use(express.json());
+app.use(static('build'));
+app.use(json());
 app.use(requestLogger);
 app.use(cors())
 
@@ -21,17 +21,17 @@ app.get('/about/', (req, res) => {
 })
 
 app.get('/api/notes/', (request, response) => {
-  const body = reqest.body;
+  const body = request.body;
 
   if(body.content === undefined) return response.status(400).json({ error: 'content missing' });
 
-  Note.find({}).then(notes => {
+  find({}).then(notes => {
     response.json(notes);
   })
 })
 
 app.get('/api/notes/:id', (request, response, next) => {
-  Note.findById(request.params.id)
+  findById(request.params.id)
     .then(note=>{
       if(note) response.json(note);
       else response.status(404).end();
@@ -44,7 +44,7 @@ app.get('/api/', (request, response)=>{
 })
 
 app.delete('/api/notes/:id', (request, response, next) => {
-  Note.findByIdAndRemove(request.params.id)
+  findByIdAndRemove(request.params.id)
     .then(result =>{
       response.status(204).end();
     })
@@ -81,7 +81,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     important: body.important,
   }
 
-  Note.findByIdAndUpdate(request.params.id, { content, important }, {new: true, runValidators: true, context: 'query' })
+  findByIdAndUpdate(request.params.id, { content, important }, {new: true, runValidators: true, context: 'query' })
     .then(updatedNote => {
       response.json(updatedNote)
     })
