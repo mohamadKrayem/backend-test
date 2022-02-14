@@ -1,9 +1,8 @@
 require('dotenv').config();
-import express from 'express';
+const express = require('express')
 const app = express();
-import cors from 'cors';
-import Note, { find, findById, findByIdAndRemove, findByIdAndUpdate } from './models/note';
-
+const cors = require('cors');
+const Note = require('./models/note');
 
 app.use(static('build'));
 app.use(json());
