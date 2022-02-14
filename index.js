@@ -21,12 +21,8 @@ app.get('/about/', (req, res) => {
 })
 
 app.get('/api/notes/', (request, response) => {
-  const body = request.body;
-
-  if(body.content === undefined) return response.status(400).json({ error: 'content missing' });
-
   Note.find({}).then(notes => {
-    response.json(notes);
+    response.json(notes.map(note=> note.toJSON()))
   })
 })
 
